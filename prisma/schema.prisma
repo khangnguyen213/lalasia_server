@@ -10,14 +10,159 @@ datasource db {
   url      = env("DATABASE_URL_DEV")
 }
 
+enum status {
+  ACTIVE
+  INACTIVE
+  BANED
+}
+
+enum role {
+  ADMIN
+  USER
+}
+
 model User {
+  id               String             @id @default(uuid())
+  email            String             @unique
+  password         String
+  phone            String
+  first_name       String
+  last_name        String
+  address          User_Adress[]
+  role             role               @default(USER)
+  status           status             @default(ACTIVE)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+  Shopping_Session Shopping_Session[]
+  Order_Detail     Order_Detail[]
+}
+
+model User_Adress {
+  id              String    @id @default(uuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String
+  recipient_name  String
+  recipient_phone String
+  city            String
+  district        String
+  address         String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+}
+
+model Product {
+  id           String            @id @default(uuid())
+  name         String
+  desc         String
+  price        String
+  quantity     Int               @default(0)
+  discount     Product_Discount? @relation(fields: [discount_id], references: [id])
+  discount_id  String?
+  categories   Category[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  deletedAt    DateTime?
+  Session_Item Session_Item[]
+  Order_Item   Order_Item[]
+  images       Product_Image[]
+}
+
+model Product_Image {
   id         String    @id @default(uuid())
-  email      String    @unique
-  password   String
-  phone      String
-  first_name String
-  last_name  String
+  url        String
+  product    Product?  @relation(fields: [product_id], references: [id])
+  product_id String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
+}
+
+model Category {
+  id        String    @id
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Product_Discount {
+  id               String    @id @default(uuid())
+  name             String
+  desc             String
+  discount_percent Float
+  active           Boolean
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+  Product          Product[]
+}
+
+model Shopping_Session {
+  id           String         @id @default(uuid())
+  user         User           @relation(fields: [user_id], references: [id])
+  user_id      String
+  total        Decimal
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  Session_Item Session_Item[]
+}
+
+model Session_Item {
+  id         String           @id @default(uuid())
+  session    Shopping_Session @relation(fields: [session_id], references: [id])
+  session_id String
+  product    Product          @relation(fields: [product_id], references: [id])
+  product_id String
+  quantity   Int
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  deletedAt  DateTime?
+}
+
+model Order_Detail {
+  id             String       @id @default(uuid())
+  user           User         @relation(fields: [user_id], references: [id])
+  user_id        String
+  total          Decimal
+  transaction    Transaction  @relation(fields: [transaction_id], references: [id])
+  transaction_id String       @unique
+  address_id     String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
+  Order_Item     Order_Item[]
+}
+
+enum payment_type {
+  COD
+  MOMO
+  ZALO
+}
+
+model Transaction {
+  id           String       @id @default(uuid())
+  payment_type payment_type
+  amount       Decimal
+  status       String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
+
+  Order_Detail Order_Detail?
+}
+
+model Order_Item {
+  id              String       @id @default(uuid())
+  order_detail    Order_Detail @relation(fields: [order_detail_id], references: [id])
+  order_detail_id String
+  product         Product      @relation(fields: [product_id], references: [id])
+  product_id      String
+  quantity        Int
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
 }

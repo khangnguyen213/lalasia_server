@@ -2,11 +2,23 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import api from './routes/index';
+import session from 'express-session';
 
 dotenv.config();
 const server = express();
 server.use(cors());
 server.use(express.json());
+server.use(
+  session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: 'lax',
+    },
+  })
+);
 
 server.use('/api', api);
 
