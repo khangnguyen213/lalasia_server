@@ -13,6 +13,9 @@ type Session_Data_User = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  shopping_session: {
+    id: string;
+  }[];
 };
 declare module 'express-session' {
   interface SessionData {

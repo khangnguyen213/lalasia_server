@@ -67,4 +67,19 @@ export const categoryController = {
       res.status(500).send({ message: error.message });
     }
   },
+
+  addProductToCategory: async (req: Request, res: Response) => {
+    try {
+      const category = await categoryModel.addProductToCategory(
+        req.params.categoryId,
+        req.body.productId
+      );
+      res.status(200).send({
+        message: 'Thêm sản phẩm vào danh mục thành công',
+        data: category,
+      });
+    } catch (error: any) {
+      res.status(500).send({ message: error.message });
+    }
+  },
 };

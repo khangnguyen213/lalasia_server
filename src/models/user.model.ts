@@ -16,6 +16,23 @@ type User = {
   deletedAt: Date | null;
 };
 
+type UserLogin = {
+  id: string;
+  email: string;
+  password: string;
+  phone: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  shopping_session: {
+    id: string;
+  }[];
+};
+
 type UserCreate = {
   email: string;
   password: string;
@@ -53,6 +70,18 @@ export const userModel = {
         data: {
           ...user,
           password: await bcrypt.hash(user.password, 10),
+          shopping_session: {
+            create: {},
+          },
+          address: {
+            create: {
+              address: '',
+              city: '',
+              district: '',
+              recipient_name: '',
+              recipient_phone: '',
+            },
+          },
         },
       });
     } catch (error: any) {
@@ -93,11 +122,19 @@ export const userModel = {
     }
   },
 
-  login: async (email: string, password: string): Promise<User> => {
+  login: async (email: string, password: string): Promise<UserLogin> => {
     try {
       const user = await db.user.findUnique({
         where: {
           email,
+        },
+        include: {
+          shopping_session: {
+            where: {
+              deletedAt: null,
+            },
+            select: { id: true },
+          },
         },
       });
 

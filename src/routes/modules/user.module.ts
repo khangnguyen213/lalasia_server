@@ -23,7 +23,11 @@ router.post(
   ]),
   userController.createUser
 );
-router.post('/login', userController.login);
+router.post(
+  '/login',
+  trimInvalidBodyProps(['email', 'password']),
+  userController.login
+);
 router.post('/logout', userController.logout);
 
 export default router;

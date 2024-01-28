@@ -7,14 +7,21 @@ router.get('/', categoryController.getAll);
 router.get('/:id', categoryController.getOneWithProducts);
 router.post(
   '/',
-  trimInvalidBodyProps(['name', 'desc']),
+  trimInvalidBodyProps(['name', 'id']),
   categoryController.create
 );
 router.patch(
   '/:id',
-  trimInvalidBodyProps(['name', 'desc']),
+  trimInvalidBodyProps(['name', 'id']),
   categoryController.update
 );
+
+router.put(
+  '/:categoryId',
+  trimInvalidBodyProps(['productId']),
+  categoryController.addProductToCategory
+);
+
 router.delete('/:id', categoryController.delete);
 
 export default router;

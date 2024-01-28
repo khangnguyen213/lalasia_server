@@ -120,6 +120,18 @@ async function seed() {
         data: {
           ...user,
           password: await bcrypt.hash(user.password, 10),
+          shopping_session: {
+            create: {},
+          },
+          address: {
+            create: {
+              address: '',
+              city: '',
+              district: '',
+              recipient_name: '',
+              recipient_phone: '',
+            },
+          },
         },
       });
     });

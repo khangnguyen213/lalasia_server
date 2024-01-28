@@ -48,11 +48,13 @@ export const categoryModel = {
 
   async create(data: Prisma.CategoryCreateInput) {
     try {
+      console.log(data);
       return await db.category.create({
         data,
       });
     } catch (error) {
-      throw new Error('Lỗi không thể tạo sản phẩm');
+      console.log(error);
+      throw new Error('Lỗi không thể tạo danh mục mới');
     }
   },
 
@@ -84,6 +86,7 @@ export const categoryModel = {
         },
       });
     } catch (error) {
+      console.log(error);
       throw new Error('Lỗi không thể thêm sản phẩm vào danh mục');
     }
   },

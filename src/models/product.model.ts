@@ -5,7 +5,7 @@ type Product = {
   id: string;
   name: string;
   desc: string;
-  price: string;
+  price: Prisma.Decimal;
   quantity: number;
   discount_id: string | null;
   createdAt: Date;

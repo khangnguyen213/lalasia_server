@@ -28,17 +28,17 @@ model User {
   phone            String
   first_name       String
   last_name        String
-  address          User_Adress[]
+  address          User_Address[]
   role             role               @default(USER)
   status           status             @default(ACTIVE)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   deletedAt        DateTime?
-  Shopping_Session Shopping_Session[]
-  Order_Detail     Order_Detail[]
+  shopping_session Shopping_Session[]
+  order_detail     Order_Detail[]
 }
 
-model User_Adress {
+model User_Address {
   id              String    @id @default(uuid())
   user            User      @relation(fields: [userId], references: [id])
   userId          String
@@ -56,7 +56,7 @@ model Product {
   id           String            @id @default(uuid())
   name         String
   desc         String
-  price        String
+  price        Decimal           @default(0) @db.Decimal(19, 4)
   quantity     Int               @default(0)
   discount     Product_Discount? @relation(fields: [discount_id], references: [id])
   discount_id  String?
@@ -64,8 +64,8 @@ model Product {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   deletedAt    DateTime?
-  Session_Item Session_Item[]
-  Order_Item   Order_Item[]
+  session_item Session_Item[]
+  order_item   Order_Item[]
   images       Product_Image[]
 }
 
@@ -101,40 +101,46 @@ model Product_Discount {
 }
 
 model Shopping_Session {
-  id           String         @id @default(uuid())
-  user         User           @relation(fields: [user_id], references: [id])
-  user_id      String
-  total        Decimal
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  deletedAt    DateTime?
-  Session_Item Session_Item[]
+  id            String         @id @default(uuid())
+  user          User           @relation(fields: [user_id], references: [id])
+  user_id       String
+  total         Decimal        @default(0) @db.Decimal(19, 4)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  session_items Session_Item[]
+
+  @@index([user_id], name: "user_session")
 }
 
 model Session_Item {
   id         String           @id @default(uuid())
-  session    Shopping_Session @relation(fields: [session_id], references: [id])
+  session    Shopping_Session @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   session_id String
-  product    Product          @relation(fields: [product_id], references: [id])
+  product    Product          @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product_id String
   quantity   Int
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
   deletedAt  DateTime?
+
+  @@index([session_id], name: "session_product")
 }
 
 model Order_Detail {
   id             String       @id @default(uuid())
   user           User         @relation(fields: [user_id], references: [id])
   user_id        String
-  total          Decimal
-  transaction    Transaction  @relation(fields: [transaction_id], references: [id])
-  transaction_id String       @unique
+  total          Decimal      @db.Decimal(19, 4)
+  transaction    Transaction? @relation(fields: [transaction_id], references: [id])
+  transaction_id String?      @unique
   address_id     String
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
-  Order_Item     Order_Item[]
+  order_items    Order_Item[]
+
+  @@index([user_id], name: "user_order")
 }
 
 enum payment_type {
@@ -146,23 +152,25 @@ enum payment_type {
 model Transaction {
   id           String       @id @default(uuid())
   payment_type payment_type
-  amount       Decimal
+  amount       Decimal      @db.Decimal(19, 4)
   status       String
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   deletedAt    DateTime?
 
-  Order_Detail Order_Detail?
+  order_detail Order_Detail?
 }
 
 model Order_Item {
   id              String       @id @default(uuid())
-  order_detail    Order_Detail @relation(fields: [order_detail_id], references: [id])
+  order_detail    Order_Detail @relation(fields: [order_detail_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   order_detail_id String
-  product         Product      @relation(fields: [product_id], references: [id])
+  product         Product      @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product_id      String
   quantity        Int
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   deletedAt       DateTime?
+
+  @@index([order_detail_id], name: "order_product")
 }
