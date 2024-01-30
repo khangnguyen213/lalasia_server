@@ -6,7 +6,12 @@ import session from 'express-session';
 
 dotenv.config();
 const server = express();
-server.use(cors());
+server.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 server.use(express.json());
 server.use(
   session({
