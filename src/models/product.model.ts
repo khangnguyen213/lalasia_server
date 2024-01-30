@@ -77,6 +77,7 @@ export const productModel = {
         totalPage: Math.ceil(total / nPerPage),
       };
     } catch (error) {
+      console.log(error);
       throw new Error('Lỗi không thể lấy danh sách sản phẩm');
     }
   },
