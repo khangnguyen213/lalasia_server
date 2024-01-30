@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
-    "prod": "pm2 start src/index.ts --name lalasia-server"
+    "build": "npx rimraf build && npx tsc -p tsconfig.json",
+    "prod": "pm2 start build/index.js --name lalasia-server"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
