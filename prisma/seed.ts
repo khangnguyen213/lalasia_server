@@ -137,18 +137,18 @@ async function seed() {
     });
   }
 
-  if ((await db.product.count()) === 0) {
-    products.forEach(async (product) => {
-      await db.product.create({
-        data: product,
-      });
-    });
-  }
-
   if ((await db.category.count()) === 0) {
     categories.forEach(async (category) => {
       await db.category.create({
         data: category,
+      });
+    });
+  }
+
+  if ((await db.product.count()) === 0) {
+    products.forEach(async (product) => {
+      await db.product.create({
+        data: product,
       });
     });
   }
