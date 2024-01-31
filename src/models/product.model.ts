@@ -24,10 +24,32 @@ export const productModel = {
   async getAll(
     keyword?: string,
     nPerPageQuery?: string,
-    pageQuery?: string
+    pageQuery?: string,
+    sortName?: string,
+    sortPrice?: string,
+    sortCreatedAt?: string
   ): Promise<{ products: Product[]; total: number; totalPage: number }> {
     const nPerPage = nPerPageQuery ? +nPerPageQuery : 10;
     const page = pageQuery ? +pageQuery : 1;
+    const orderBy: { [key: string]: 'asc' | 'desc' }[] = [];
+    if (sortName) {
+      orderBy.push({
+        name: sortName as 'asc' | 'desc',
+      });
+    }
+    if (sortPrice) {
+      orderBy.push({
+        price: sortPrice as 'asc' | 'desc',
+      });
+    }
+    if (sortCreatedAt) {
+      orderBy.push({
+        createdAt: sortCreatedAt as 'asc' | 'desc',
+      });
+    }
+
+    console.log(orderBy);
+
     try {
       const total = await db.product.count({
         where: {
@@ -36,6 +58,7 @@ export const productModel = {
             contains: keyword,
           },
         },
+        orderBy: orderBy,
       });
       const products = await db.product.findMany({
         where: {
@@ -70,6 +93,7 @@ export const productModel = {
         },
         take: nPerPage,
         skip: (page - 1) * nPerPage,
+        orderBy: orderBy,
       });
       return {
         products,

@@ -8,7 +8,10 @@ export const productController = {
       const products = await productModel.getAll(
         req.query.keyword as string,
         req.query.nPerPage as string,
-        req.query.page as string
+        req.query.page as string,
+        req.query.sortName as string,
+        req.query.sortPrice as string,
+        req.query.sortCreatedAt as string
       );
       res.status(200).send({
         message: 'Lấy danh sách sản phẩm thành công',
