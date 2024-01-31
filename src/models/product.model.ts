@@ -157,7 +157,7 @@ export const productModel = {
         };
       }
       return await db.product.create({
-        data,
+        data: { ...data, quantity: parseInt(data.quantity as any) || 0 },
       });
     } catch (error) {
       throw new Error('Lỗi không thể tạo sản phẩm');
