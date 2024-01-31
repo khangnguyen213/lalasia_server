@@ -24,9 +24,12 @@ jobs:
           port: 22
           script: |
             echo "Truy cập vào thư mục dự án"
-            cd /var/www/lalasia/lalasia_server
+            cd /var/www/lalasia/lalasia_server/
             echo "Pull code mới từ github"
             git pull
+            echo "Kích hoạt NVM"
+            . $HOME/.nvm/nvm.sh
+            nvm use
             echo "Dịch ts -> js"
             npm run build
             echo "Reload pm2"
